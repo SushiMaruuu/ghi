@@ -26,19 +26,16 @@ def generate_mcqs_and_summary(text):
 
     # Call OpenAI's GPT model to generate MCQs and a summary
     try:
-        response = openai.ChatCompletion.create(
+        response = openai.completions.create(
             model="gpt-3.5-turbo",  # Use GPT-3.5 Turbo
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that generates multiple-choice questions with answers and a summary from content."},
-                {"role": "user", "content": f"Generate exactly 10 multiple-choice questions with four options each (one correct answer), and provide the correct answer after each question. Then, provide a separate summary of the following content. Separate the questions and summary clearly:\n\n{truncated_text}\n\n--- Summary ---"}
-            ],
+            prompt=f"Generate exactly 10 multiple-choice questions with four options each (one correct answer), and provide the correct answer after each question. Then, provide a separate summary of the following content. Separate the questions and summary clearly:\n\n{truncated_text}\n\n--- Summary ---",
             max_tokens=1000,  # Allow more space for questions and summary
             temperature=0.7,
             n=1,
         )
         
         # Extract the generated text from the response
-        generated_text = response['choices'][0]['message']['content'].strip()
+        generated_text = response['choices'][0]['text'].strip()
         
         # Split the response into questions and summary using the separator
         parts = generated_text.split("--- Summary ---")
